@@ -12,6 +12,8 @@ public interface UserDAO {
 
     User getByLogin(String login);
 
+    boolean canRegisterUser(User user);
+
     void updateUser(User user);
 
     void deleteUser(User user);

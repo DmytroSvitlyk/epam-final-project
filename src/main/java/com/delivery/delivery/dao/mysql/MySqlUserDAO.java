@@ -5,6 +5,7 @@ import com.delivery.delivery.dao.UserDAO;
 import com.delivery.delivery.model.Role;
 import com.delivery.delivery.model.User;
 import com.delivery.delivery.dao.pool.ConnectionPool;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,11 +13,16 @@ import java.util.List;
 
 public class MySqlUserDAO implements UserDAO {
 
+    private static Logger logger = Logger.getLogger(MySqlUserDAO.class);
+
     private static MySqlUserDAO instance;
 
     private static final String INSERT_USER = "INSERT INTO user (first_name, second_name, login, email, phone, password, role) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String GET_BY_ID = "SELECT * FROM user WHERE id = ?";
     private static final String GET_BY_LOGIN = "SELECT * FROM user WHERE login = ?";
+    private static final String CHECK_FOR_UNIQUE_LOGIN = "SELECT COUNT(*) FROM user WHERE login = ?";
+    private static final String CHECK_FOR_UNIQUE_EMAIL = "SELECT COUNT(*) FROM user WHERE email = ?";
+    private static final String CHECK_FOR_UNIQUE_PHONE = "SELECT COUNT(*) FROM user WHERE phone = ?";
     private static final String GET_ALL = "SELECT * FROM user";
     private static final String UPDATE_USER = "UPDATE user SET first_name = ?, second_name = ?, login = ?, email = ?, phone = ?, password = ?, role = ? WHERE id = ?";
     private static final String DELETE_USER = "DELETE FROM user WHERE id = ?";
@@ -55,8 +61,8 @@ public class MySqlUserDAO implements UserDAO {
             }
         }
         catch (SQLException e) {
-            // TODO: 21.08.2021 ADD LOGGER
-            e.printStackTrace();
+            logger.warn("Inserting user to database failed");
+            throw new DAOException(e);
         }
         return user;
     }
@@ -77,8 +83,8 @@ public class MySqlUserDAO implements UserDAO {
             }
         }
         catch (SQLException e) {
-            // TODO: 21.08.2021 ADD LOGGER
-            e.printStackTrace();
+            logger.info("User with id " + id + " not found");
+            throw new DAOException(e);
         }
         return user;
     }
@@ -94,15 +100,59 @@ public class MySqlUserDAO implements UserDAO {
                     user = parseUser(set);
                 }
                 else {
-                    throw new DAOException("User not found");
+                    throw new SQLException("User not found");
                 }
             }
         }
         catch (SQLException e) {
-            // TODO: 21.08.2021 ADD LOGGER
-            e.printStackTrace();
+            logger.info("User with login " + login + " not found");
+            throw new DAOException(e);
         }
         return user;
+    }
+
+    @Override
+    public boolean canRegisterUser(User user) {
+        if(!loginIsUnique(user.getLogin())) {
+            throw new DAOException("This login is already taken");
+        }
+        if(!emailIsUnique(user.getEmail())) {
+            throw new DAOException("This email is already taken");
+        }
+        if(!phoneIsUnique(user.getPhone())) {
+            throw new DAOException("This phone is already taken");
+        }
+        return true;
+    }
+
+    private boolean loginIsUnique(String login) {
+        return checkForUnique(CHECK_FOR_UNIQUE_LOGIN, login, "login");
+    }
+
+    private boolean emailIsUnique(String email) {
+        return checkForUnique(CHECK_FOR_UNIQUE_EMAIL, email, "email");
+    }
+
+    private boolean phoneIsUnique(String phone) {
+        return checkForUnique(CHECK_FOR_UNIQUE_PHONE, phone, "phone");
+    }
+
+    private boolean checkForUnique(String query, String value, String field) {
+        try(Connection con = ConnectionPool.getInstance().getConnection();
+            PreparedStatement statement = con.prepareStatement(query)) {
+            statement.setString(1, value);
+            try(ResultSet set = statement.executeQuery()) {
+                if(set.next()) {
+                    if(set.getInt(1) == 0) {
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            logger.info("Exception while checking " + field + " " + value + " for unique");
+            throw new DAOException(e);
+        }
+        return false;
     }
 
     @Override

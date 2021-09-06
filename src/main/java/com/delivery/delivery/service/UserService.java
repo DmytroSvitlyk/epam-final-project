@@ -6,6 +6,8 @@ import com.delivery.delivery.dao.UserDAO;
 import com.delivery.delivery.model.User;
 import org.apache.log4j.Logger;
 
+import java.sql.SQLException;
+
 public class UserService {
 
     Logger logger = Logger.getLogger(UserService.class);
@@ -22,12 +24,12 @@ public class UserService {
         return instance;
     }
 
-    private UserDAO getDAO() {
+    private UserDAO getUserDAO() {
         return DAOFactory.getDAOFactory().getUserDao();
     }
 
     public User login(String login, String password) {
-        UserDAO dao = getDAO();
+        UserDAO dao = getUserDAO();
         try {
             User user = dao.getByLogin(login);
             if (password.equals(user.getPassword())) {
@@ -40,7 +42,16 @@ public class UserService {
     }
 
     public User register(User user) {
-        return getDAO().insertUser(user);
+        UserDAO dao = getUserDAO();
+        try {
+            if(dao.canRegisterUser(user)) {
+                return getUserDAO().insertUser(user);
+            }
+        } catch (DAOException e) {
+            logger.info("Unable to register user: " + e.getMessage());
+            throw new ServiceException(e);
+        }
+        return null;
     }
 
 }
