@@ -7,7 +7,7 @@ public class OrderPriceCalculator {
 
     public static double calculatePrice(Order order) {
         if (!Tariff.initialized)
-            throw new IllegalStateException("Cant calculate order if Tariff is not initialized");
+            throw new UtilException("Cant calculate order if Tariff is not initialized");
         double price = Tariff.defaultPrice;
         price += getPriceByWeight(order.getCargo().getCalcWeight());
         price += order.getDirection().getRange() * Tariff.perKmPrice;
@@ -18,7 +18,7 @@ public class OrderPriceCalculator {
 
     private static double getPriceByWeight(double weight) {
         if (weight <= 0) {
-            throw new IllegalStateException("Cargo weight cant be negative or null");
+            throw new UtilException("Cargo weight cant be negative or null");
         }
         if (weight <= 2) {
             return Tariff.belowTwoKgPrice;

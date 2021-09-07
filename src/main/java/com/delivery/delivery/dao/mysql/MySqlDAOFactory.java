@@ -41,13 +41,4 @@ public class MySqlDAOFactory extends DAOFactory{
         return MySqlDirectionDAO.getInstance();
     }
 
-    @Override
-    public CargoDAO getCargoDAO() {
-        return MySqlCargoDAO.getInstance();
-    }
-
-    @Override
-    public OrderAddDAO getOrderAddDAO() {
-        return MySqlOrderAddDAO.getInstance();
-    }
 }

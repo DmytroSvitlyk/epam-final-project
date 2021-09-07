@@ -31,8 +31,4 @@ public abstract class DAOFactory {
 
     public abstract DirectionDAO getDirectionDAO();
 
-    public abstract CargoDAO getCargoDAO();
-
-    public abstract OrderAddDAO getOrderAddDAO();
-
 }

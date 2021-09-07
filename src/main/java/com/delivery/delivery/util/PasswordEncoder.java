@@ -4,10 +4,11 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 public class PasswordEncoder {
+
+    private static final Logger logger = Logger.getLogger(PasswordEncoder.class);
 
     public static String encodePassword(String password) {
         MessageDigest digest = null;
@@ -16,12 +17,10 @@ public class PasswordEncoder {
             digest = MessageDigest.getInstance("MD5");
             digest.update(password.getBytes(StandardCharsets.UTF_8));
         } catch (NoSuchAlgorithmException e) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "An exception was thrown", e);
+            logger.warn("An exception was thrown while encoding password");
+            throw new UtilException(e);
         }
-        if(digest != null)
-            hash = digest.digest();
-        else
-            throw new NullPointerException();
+        hash = digest.digest();
         StringBuilder res = new StringBuilder();
         String hexTmp;
         for(byte b : hash){

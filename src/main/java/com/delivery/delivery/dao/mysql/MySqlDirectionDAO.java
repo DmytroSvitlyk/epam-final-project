@@ -1,15 +1,19 @@
 package com.delivery.delivery.dao.mysql;
 
+import com.delivery.delivery.dao.DAOException;
 import com.delivery.delivery.dao.DirectionDAO;
 import com.delivery.delivery.dao.pool.ConnectionPool;
 import com.delivery.delivery.model.Depot;
 import com.delivery.delivery.model.Direction;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MySqlDirectionDAO implements DirectionDAO {
+
+    private static final Logger logger = Logger.getLogger(MySqlDirectionDAO.class);
 
     private static MySqlDirectionDAO instance;
 
@@ -54,8 +58,8 @@ public class MySqlDirectionDAO implements DirectionDAO {
             }
         }
         catch (SQLException e) {
-            // TODO: 21.08.2021 ADD LOGGER
-            e.printStackTrace();
+            logger.warn("Unable to add direction to database");
+            throw new DAOException(e);
         }
         return direction;
     }
@@ -76,19 +80,19 @@ public class MySqlDirectionDAO implements DirectionDAO {
             }
         }
         catch (SQLException e) {
-            // TODO: 21.08.2021 ADD LOGGER
-            e.printStackTrace();
+            logger.warn("Unable to find direction with id: " + id);
+            throw new DAOException(e);
         }
         return direction;
     }
 
     @Override
-    public List<Integer> getIdByCityLikeStatement(String cityFromLike, String cityToLike) {
+    public List<Integer> getIdByCityLikeStatement(String depotFromLike, String depotToLike) {
         List<Integer> ids = new ArrayList<>();
         try(Connection conn = ConnectionPool.getInstance().getConnection();
             PreparedStatement statement = conn.prepareStatement(SELECT_BY_LIKE)) {
-            statement.setString(1, cityFromLike + "%");
-            statement.setString(2, cityToLike + "%");
+            statement.setString(1, depotFromLike + "%");
+            statement.setString(2, depotToLike + "%");
             try(ResultSet set = statement.executeQuery()) {
                 while(set.next()) {
                     ids.add(set.getInt(1));
@@ -96,8 +100,8 @@ public class MySqlDirectionDAO implements DirectionDAO {
             }
         }
         catch (SQLException e) {
-            // TODO: 22.08.2021 ADD LOGGER
-            e.printStackTrace();
+            logger.warn("Unable to find directions by like statements");
+            throw new DAOException(e);
         }
         return ids;
     }
@@ -115,8 +119,8 @@ public class MySqlDirectionDAO implements DirectionDAO {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            // TODO: 21.08.2021 ADD LOGGER
-            e.printStackTrace();
+            logger.warn("Unable to update direction");
+            throw new DAOException(e);
         }
     }
 
@@ -127,8 +131,8 @@ public class MySqlDirectionDAO implements DirectionDAO {
             statement.setInt(1, direction.getId());
             statement.execute();
         } catch (SQLException e) {
-            // TODO: 21.08.2021 ADD LOGGER
-            e.printStackTrace();
+            logger.warn("Unable to delete direction from database");
+            throw new DAOException(e);
         }
     }
 
@@ -141,8 +145,8 @@ public class MySqlDirectionDAO implements DirectionDAO {
                 directions.add(parseDirection(set));
             }
         } catch (SQLException e) {
-            // TODO: 21.08.2021 ADD LOGGER
-            e.printStackTrace();
+            logger.warn("Unable to get directions from database");
+            throw new DAOException(e);
         }
         return directions;
     }

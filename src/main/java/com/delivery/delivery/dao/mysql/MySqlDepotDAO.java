@@ -1,8 +1,10 @@
 package com.delivery.delivery.dao.mysql;
 
+import com.delivery.delivery.dao.DAOException;
 import com.delivery.delivery.dao.DepotDAO;
 import com.delivery.delivery.dao.pool.ConnectionPool;
 import com.delivery.delivery.model.Depot;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,12 +12,14 @@ import java.util.List;
 
 public class MySqlDepotDAO implements DepotDAO {
 
+    private static Logger logger = Logger.getLogger(MySqlDepotDAO.class);
+
     private static MySqlDepotDAO instance;
 
-    private static final String INSERT_DEPOT = "INSERT INTO depot (city, address)  VALUES (?, ?)";
+    private static final String INSERT_DEPOT = "INSERT INTO depot (depot_name, default_address)  VALUES (?, ?)";
     private static final String GET_BY_ID = "SELECT * FROM depot WHERE id = ?";
     private static final String GET_ALL = "SELECT * FROM depot";
-    private static final String UPDATE_DEPOT = "UPDATE depot SET city = ?, address = ? WHERE id = ?";
+    private static final String UPDATE_DEPOT = "UPDATE depot SET depot_name = ?, default_address = ? WHERE id = ?";
     private static final String DELETE_DEPOT = "DELETE FROM depot WHERE id = ?";
 
     private MySqlDepotDAO() {
@@ -33,7 +37,7 @@ public class MySqlDepotDAO implements DepotDAO {
         try(Connection conn = ConnectionPool.getInstance().getConnection();
             PreparedStatement statement = conn.prepareStatement(INSERT_DEPOT, Statement.RETURN_GENERATED_KEYS)) {
             int index = 1;
-            statement.setString(index++, depot.getCity());
+            statement.setString(index++, depot.getName());
             statement.setString(index++, depot.getAddress());
             statement.execute();
             try(ResultSet set = statement.getGeneratedKeys()) {
@@ -47,7 +51,8 @@ public class MySqlDepotDAO implements DepotDAO {
         }
         catch (SQLException e) {
             // TODO: 21.08.2021 ADD LOGGER
-            e.printStackTrace();
+            logger.warn("Unable to add depot to database");
+            throw new DAOException(e);
         }
         return depot;
     }
@@ -79,7 +84,7 @@ public class MySqlDepotDAO implements DepotDAO {
         try(Connection conn = ConnectionPool.getInstance().getConnection();
             PreparedStatement statement = conn.prepareStatement(UPDATE_DEPOT)) {
             int index = 1;
-            statement.setString(index++, depot.getCity());
+            statement.setString(index++, depot.getName());
             statement.setString(index++, depot.getAddress());
             statement.setInt(index++, depot.getId());
             statement.executeUpdate();

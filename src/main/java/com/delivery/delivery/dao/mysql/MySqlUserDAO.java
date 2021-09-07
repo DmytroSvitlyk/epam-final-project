@@ -78,12 +78,12 @@ public class MySqlUserDAO implements UserDAO {
                     user = parseUser(set);
                 }
                 else {
-                    throw new SQLException("User not found");
+                    return null;
                 }
             }
         }
         catch (SQLException e) {
-            logger.info("User with id " + id + " not found");
+            logger.info("Unable to find user by id");
             throw new DAOException(e);
         }
         return user;
@@ -100,12 +100,12 @@ public class MySqlUserDAO implements UserDAO {
                     user = parseUser(set);
                 }
                 else {
-                    throw new SQLException("User not found");
+                    return null;
                 }
             }
         }
         catch (SQLException e) {
-            logger.info("User with login " + login + " not found");
+            logger.info("Unable to find user by login");
             throw new DAOException(e);
         }
         return user;
@@ -171,8 +171,8 @@ public class MySqlUserDAO implements UserDAO {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            // TODO: 21.08.2021 ADD LOGGER
-            e.printStackTrace();
+            logger.warn("Unable to update user");
+            throw new DAOException(e);
         }
     }
 
@@ -183,8 +183,8 @@ public class MySqlUserDAO implements UserDAO {
             statement.setInt(1, user.getId());
             statement.execute();
         } catch (SQLException e) {
-            // TODO: 21.08.2021 ADD LOGGER
-            e.printStackTrace();
+            logger.warn("Unable to delete user");
+            throw new DAOException(e);
         }
     }
 
@@ -197,8 +197,8 @@ public class MySqlUserDAO implements UserDAO {
                 users.add(parseUser(set));
             }
         } catch (SQLException e) {
-            // TODO: 21.08.2021 ADD LOGGER
-            e.printStackTrace();
+            logger.warn("Unable to get users");
+            throw new DAOException(e);
         }
         return users;
     }

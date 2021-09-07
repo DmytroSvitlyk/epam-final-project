@@ -1,7 +1,6 @@
 package com.delivery.delivery.dao;
 
 import com.delivery.delivery.model.Order;
-import com.delivery.delivery.model.Status;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,7 +17,7 @@ public interface OrderDAO {
 
     List<Order> getByStatusId(int id);
 
-    List<Integer> getIdByDate(int day, int month, int year);
+    List<Order> getByGoalDate(LocalDate date);
 
     void updateStatus(Order order);
 

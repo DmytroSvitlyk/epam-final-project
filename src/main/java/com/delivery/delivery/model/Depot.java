@@ -3,7 +3,7 @@ package com.delivery.delivery.model;
 public class Depot {
 
     private int id;
-    private String city;
+    private String name;
     private String address;
 
     public Depot(int id) {
@@ -12,7 +12,7 @@ public class Depot {
 
     public Depot(int id, String name, String address) {
         this.id = id;
-        this.city = name;
+        this.name = name;
         this.address = address;
     }
 
@@ -24,12 +24,12 @@ public class Depot {
         this.id = id;
     }
 
-    public String getCity() {
-        return city;
+    public String getName() {
+        return name;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getAddress() {

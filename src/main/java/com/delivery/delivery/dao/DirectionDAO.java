@@ -10,7 +10,7 @@ public interface DirectionDAO {
 
     Direction getById(int id);
 
-    List<Integer> getIdByCityLikeStatement(String cityFromLike, String cityToLike);
+    List<Integer> getIdByCityLikeStatement(String depotFromLike, String depotToLike);
 
     void updateDirection(Direction direction);
 
