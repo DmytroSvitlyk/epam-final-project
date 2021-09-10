@@ -13,13 +13,23 @@ public class FrontController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String target = controller.getCommand(request.getParameter("command")).execute(request, response);
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(target);
-        dispatcher.forward(request, response);
+        process(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
+        process(request, response);
     }
+
+    private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String target = controller.getCommand(request.getParameter("command")).execute(request, response);
+        if(target.startsWith("redirect:")) {
+            response.sendRedirect(target.substring(9));
+        }
+        else {
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(target);
+            dispatcher.forward(request, response);
+        }
+    }
+
 }
