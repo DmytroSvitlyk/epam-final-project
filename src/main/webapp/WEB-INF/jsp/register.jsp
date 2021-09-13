@@ -24,31 +24,31 @@
             <input type="text" class="form-control" id="sName" name="sName" required style="width: 300px"/>
         </div>
         <div class="form-group">
-            <label for="login"><fmt:message key="label.form.login"/></label>
+            <label for="login"><fmt:message key="login.form.login"/></label>
             <input type="text" class="form-control" id="login" name="login" required style="width: 300px"/>
         </div>
         <div class="form-group">
-            <label for="email"><fmt:message key="label.form.email"/></label>
+            <label for="email"><fmt:message key="login.form.email"/></label>
             <input type="email" class="form-control" id="email" name="email" required style="width: 300px"/>
         </div>
         <div class="form-group">
-            <label for="phone"><fmt:message key="label.form.phone"/></label>
+            <label for="phone"><fmt:message key="login.form.phone"/></label>
             <input type="tel" class="form-control" id="phone" name="phone" required style="width: 300px"/>
         </div>
         <div class="form-group">
-            <label for="password"><fmt:message key="label.form.password"/></label>
+            <label for="password"><fmt:message key="login.form.password"/></label>
             <input type="password" class="form-control" id="password" name="password" required style="width: 300px"/>
         </div>
         <div class="form-group">
-            <label for="confirm-password"><fmt:message key="label.form.confirm-password"/></label>
+            <label for="confirm-password"><fmt:message key="login.form.confirm-password"/></label>
             <input type="password" class="form-control" id="confirm-password" name="cPassword" required style="width: 300px"/>
         </div>
         <div class="form-check">
             <input type="checkbox" class="form-check-input" id="aggr" required/>
-            <label class="form-check-label" for="aggr"><fmt:message key="label.form.user-agreement"/></label>
+            <label class="form-check-label" for="aggr"><fmt:message key="login.form.user-agreement"/></label>
         </div><br>
         <input type="text" value="register" name="command" hidden>
-        <button type="submit" class="btn btn-primary"><fmt:message key="label.form.register"/></button><br><br>
+        <button type="submit" class="btn btn-primary"><fmt:message key="login.form.register"/></button><br><br>
         <a href="login?command=get-login-page"><fmt:message key="link.pages.login"/></a>
     </form>
 </body>

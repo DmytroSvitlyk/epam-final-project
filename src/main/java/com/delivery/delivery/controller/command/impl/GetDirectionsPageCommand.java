@@ -10,14 +10,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-public class GetCabinetPageCommand implements Command {
+public class GetDirectionsPageCommand implements Command {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
+        DirectionService directionService = DirectionService.getInstance();
+        request.setAttribute("currentPage", 1);
         try {
-            request.setAttribute("list", DirectionService.getInstance().getAllDirections(10, 0));
-        }catch (ServiceException e) {
-            request.setAttribute("error", e.getMessage());
+            List<Direction> directionList = directionService.getAllDirections(10, 0);
+            request.setAttribute("list", directionList);
+        } catch (ServiceException e) {
+            return "/WEB-INF/jsp/error.jsp";
         }
-        return Path.CABINET_PAGE;
+
+        return Path.DIRECTIONS_PAGE;
     }
 }

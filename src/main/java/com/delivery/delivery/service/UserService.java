@@ -15,8 +15,8 @@ public class UserService {
     private static UserService instance;
 
     private static final String LOGIN_REGEX = "^[a-zA-Z][a-zA-Z_0-9]+$";
-    private static final String EMAIL_REGEX = "[A-Za-z0-9+_.-]+@[a-zA-Z0-9]\\.[a-zA-Z]+$";
-    private static final String NAME_REGEX = "^[a-z ,.'-]+$";
+    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[a-zA-Z0-9]+\\.[a-zA-Z]+$";
+    private static final String NAME_REGEX = "^[a-zA-Z ,.'-]+$";
 
     private UserService(){
     }

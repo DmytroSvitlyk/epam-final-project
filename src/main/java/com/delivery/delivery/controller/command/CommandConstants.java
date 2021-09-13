@@ -9,5 +9,8 @@ public interface CommandConstants {
     String LOGIN = "login";
     String REGISTER = "register";
     String LOCALE_CHANGE = "locale-change";
-
+    String GET_HOME_PAGE = "get-home-page";
+    String GET_DIRECTIONS_PAGE = "get-directions-page";
+    String GET_DIRECTIONS = "get-directions";
+    String FIND_DIRECTIONS = "find-directions";
 }

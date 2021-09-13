@@ -10,12 +10,14 @@ public interface DirectionDAO {
 
     Direction getById(int id);
 
-    List<Integer> getIdByCityLikeStatement(String depotFromLike, String depotToLike);
+    List<Integer> getIdByCityLikeStatement(String depotFromLike, String depotToLike, String sortBy, int count, int page);
 
     void updateDirection(Direction direction);
 
     void deleteDirection(Direction direction);
 
-    List<Direction> getAllDirections();
+    List<Direction> getAllDirections(int count, int page);
+
+    int getPageCount(int onPageCount);
 
 }

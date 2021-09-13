@@ -1,6 +1,7 @@
 package com.delivery.delivery.controller.command.impl;
 
 import com.delivery.delivery.controller.command.Command;
+import com.delivery.delivery.controller.command.Path;
 import com.delivery.delivery.model.Role;
 import com.delivery.delivery.model.User;
 import com.delivery.delivery.service.ServiceException;
@@ -25,10 +26,10 @@ public class RegisterCommand implements Command {
             user = service.register(user);
             request.getSession().setAttribute("user", user);
             request.getSession().removeAttribute("error");
-            return "redirect:delivery_war_exploded/cabinet?command=get-cabinet-page";
+            return Path.REDIRECT_CABINET;
         } catch (ServiceException e) {
-            request.getSession().setAttribute("error", "Failed To Register");
-            return "/WEB-INF/jsp/register.jsp";
+            request.getSession().setAttribute("error", e.getMessage());
+            return Path.REDIRECT_REGISTER;
         }
 
     }

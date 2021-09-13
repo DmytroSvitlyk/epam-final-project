@@ -38,12 +38,11 @@ public class DirectionService {
     public Direction getDirectionById(int id) {
         DirectionDAO directionDAO = getDirectionDAO();
         DepotDAO depotDAO = getDepotDAO();
-        Direction direction = null;
+        Direction direction;
         try {
             direction = directionDAO.getById(id);
-            direction.setDepotFrom(depotDAO.getById(direction.getDepotFrom().getId()));
-            direction.setDepotTo(depotDAO.getById(direction.getDepotTo().getId()));
-        } catch (DAOException e) {
+            fillDirection(direction);
+       } catch (DAOException e) {
             logger.warn("Error while trying to get direction by id: " + id);
             throw new ServiceException(e);
         }
@@ -80,18 +79,40 @@ public class DirectionService {
         }
     }
 
-    public List<Direction> getDirectionsByDepotNames(String depotFrom, String depotTo) {
+    public List<Direction> getDirectionsByDepotNames(String depotFrom, String depotTo, String sortBy, int count, int page) {
         DirectionDAO dao = getDirectionDAO();
         List<Direction> directions = new ArrayList<>();
         try {
-            for(int id : dao.getIdByCityLikeStatement(depotFrom, depotTo)) {
-                directions.add(dao.getById(id));
+            for(int id : dao.getIdByCityLikeStatement(depotFrom, depotTo, sortBy,  count, page)) {
+                Direction d = dao.getById(id);
+                fillDirection(d);
+                directions.add(d);
             }
         } catch (DAOException e) {
             logger.warn("Error while trying to get directions by statements: " + depotFrom + ", " + depotTo);
             throw new ServiceException(e);
         }
         return directions;
+    }
+
+    public List<Direction> getAllDirections(int count, int page) {
+        DirectionDAO dao = getDirectionDAO();
+        List<Direction> directions;
+        try {
+            directions = dao.getAllDirections(count, page);
+            for(Direction d : directions) {
+                fillDirection(d);
+            }
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+        return directions;
+    }
+
+    private void fillDirection(Direction direction) {
+        DepotDAO depotDAO = getDepotDAO();
+        direction.setDepotFrom(depotDAO.getById(direction.getDepotFrom().getId()));
+        direction.setDepotTo(depotDAO.getById(direction.getDepotTo().getId()));
     }
 
 }

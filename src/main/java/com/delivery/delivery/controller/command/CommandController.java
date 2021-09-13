@@ -14,6 +14,10 @@ public class CommandController {
             case CommandConstants.REGISTER : return new RegisterCommand();
             case CommandConstants.LOGOUT : return new LogoutCommand();
             case CommandConstants.GET_CABINET_PAGE : return new GetCabinetPageCommand();
+            case CommandConstants.GET_HOME_PAGE : return new GetHomePageCommand();
+            case CommandConstants.GET_DIRECTIONS_PAGE : return new GetDirectionsPageCommand();
+            case CommandConstants.GET_DIRECTIONS : return new GetDirectionsCommand();
+            case CommandConstants.FIND_DIRECTIONS : return new FindDirectionsCommand();
             default: return new UnknownCommand();
         }
     }

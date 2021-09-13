@@ -19,13 +19,14 @@ public class MySqlDirectionDAO implements DirectionDAO {
 
     private static final String INSERT_DIRECTION = "INSERT INTO direction (depot_from_id, depot_to_id, departure_time, arrive_time , trip_range) VALUES (?, ?, ?, ?, ?)";
     private static final String GET_BY_ID = "SELECT * FROM direction WHERE id = ?";
-    private static final String GET_ALL = "SELECT * FROM direction";
+    private static final String GET_ALL = "SELECT * FROM direction LIMIT ";
+    private static final String GET_ALL_COUNT = "SELECT COUNT(*) FROM direction";
     private static final String UPDATE_DIRECTION = "UPDATE direction SET depot_from_id = ?, depot_to_id = ?, departure_time = ?, arrive_time = ? , trip_range = ? WHERE id = ?";
     private static final String DELETE_DIRECTION = "DELETE FROM direction WHERE id = ?";
     private static final String SELECT_BY_LIKE = "SELECT di.id from direction di \n" +
                                             "JOIN depot d1 ON d1.id = di.depot_from_id \n" +
                                             "JOIN depot d2 ON d2.id = di.depot_to_id\n" +
-                                            "WHERE d1.depot_name LIKE ? AND d2.depot_name LIKE ?;";
+                                            "WHERE d1.depot_name LIKE ? AND d2.depot_name LIKE ? ORDER BY %s %s LIMIT ?, ?;";
 
     private MySqlDirectionDAO() {
     }
@@ -66,7 +67,7 @@ public class MySqlDirectionDAO implements DirectionDAO {
 
     @Override
     public Direction getById(int id) {
-        Direction direction = null;
+        Direction direction;
         try(Connection conn = ConnectionPool.getInstance().getConnection();
             PreparedStatement statement = conn.prepareStatement(GET_BY_ID)) {
             statement.setInt(1, id);
@@ -87,12 +88,22 @@ public class MySqlDirectionDAO implements DirectionDAO {
     }
 
     @Override
-    public List<Integer> getIdByCityLikeStatement(String depotFromLike, String depotToLike) {
+    public List<Integer> getIdByCityLikeStatement(String depotFromLike, String depotToLike, String sortBy, int count, int page) {
         List<Integer> ids = new ArrayList<>();
+        String order = "null";
+        if(sortBy.equals("byFrom")) {
+            order="d1.depot_name";
+        }
+        else if(sortBy.equals("byTo")) {
+            order="d2.depot_name";
+        }
+        String sql = String.format(SELECT_BY_LIKE, order, "ASC");
         try(Connection conn = ConnectionPool.getInstance().getConnection();
-            PreparedStatement statement = conn.prepareStatement(SELECT_BY_LIKE)) {
+            PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setString(1, depotFromLike + "%");
             statement.setString(2, depotToLike + "%");
+            statement.setInt(3, count*page);
+            statement.setInt(4, count);
             try(ResultSet set = statement.executeQuery()) {
                 while(set.next()) {
                     ids.add(set.getInt(1));
@@ -137,10 +148,10 @@ public class MySqlDirectionDAO implements DirectionDAO {
     }
 
     @Override
-    public List<Direction> getAllDirections() {
+    public List<Direction> getAllDirections(int count, int page) {
         List<Direction> directions = new ArrayList<>();
         try(Connection conn = ConnectionPool.getInstance().getConnection();
-            ResultSet set = conn.createStatement().executeQuery(GET_ALL)) {
+            ResultSet set = conn.createStatement().executeQuery(GET_ALL + count*page + ", " + count)) {
             while(set.next()) {
                 directions.add(parseDirection(set));
             }
@@ -149,6 +160,20 @@ public class MySqlDirectionDAO implements DirectionDAO {
             throw new DAOException(e);
         }
         return directions;
+    }
+
+    @Override
+    public int getPageCount(int onPageCount) {
+        try(Connection conn = ConnectionPool.getInstance().getConnection();
+            ResultSet set = conn.createStatement().executeQuery(GET_ALL_COUNT)) {
+            if(set.next()) {
+                return (int)Math.ceil(set.getFloat(1)/onPageCount);
+            }
+        } catch (SQLException e) {
+            logger.warn("Unable to get directions from database");
+            throw new DAOException(e);
+        }
+        return -1;
     }
 
     private Direction parseDirection(ResultSet set) throws SQLException {
