@@ -5,7 +5,10 @@
 <%@ attribute name="direction" required="true" type="com.delivery.delivery.model.Direction" %>
 
 <fmt:setBundle basename="localization.lang"/>
-<th scope="col">${direction.getId()}</th>
-<td>${direction.getDepotFrom().getName()}</td>
-<td>${direction.getDepotTo().getName()}</td>
-<td>${direction.getRange()}</td>
+<td>${direction.depotFrom.name}</td>
+<td>${direction.depotTo.name}</td>
+<td>${direction.depotFrom.address}</td>
+<td>${direction.depotTo.address}</td>
+<td>${direction.departureTime}</td>
+<td>${direction.arriveTime}</td>
+<td>${direction.range}</td>

@@ -10,6 +10,10 @@ public class Depot {
         this.id = id;
     }
 
+    public Depot(String name) {
+        this.name = name;
+    }
+
     public Depot(int id, String name, String address) {
         this.id = id;
         this.name = name;

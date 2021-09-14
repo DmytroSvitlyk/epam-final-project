@@ -36,6 +36,16 @@ public class DepotService {
         }
     }
 
+    public int getIdByName(String name) {
+        DepotDAO dao = getDepotDAO();
+        try {
+            return dao.getIdByName(name);
+        } catch (DAOException e) {
+            logger.warn("Error while trying to get depot by name");
+            throw new ServiceException(e);
+        }
+    }
+
     public void deleteDepot(Depot depot) {
         DepotDAO dao = getDepotDAO();
         try {

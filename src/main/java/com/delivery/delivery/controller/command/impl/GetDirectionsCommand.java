@@ -19,6 +19,7 @@ public class GetDirectionsCommand implements Command {
         request.setAttribute("currentPage", page);
         try {
             List<Direction> directionList = directionService.getAllDirections(10, page-1);
+            request.setAttribute("pageCount", directionService.getPageCount(10));
             request.setAttribute("list", directionList);
         } catch (ServiceException e) {
             return "/WEB-INF/jsp/error.jsp";

@@ -41,7 +41,9 @@ public class DirectionService {
         Direction direction;
         try {
             direction = directionDAO.getById(id);
-            fillDirection(direction);
+            if(direction!=null) {
+                fillDirection(direction);
+            }
        } catch (DAOException e) {
             logger.warn("Error while trying to get direction by id: " + id);
             throw new ServiceException(e);
@@ -107,6 +109,15 @@ public class DirectionService {
             throw new ServiceException(e);
         }
         return directions;
+    }
+
+    public int getPageCount(int onPageCount) {
+        try {
+            return getDirectionDAO().getPageCount(onPageCount);
+        } catch (DAOException e) {
+            logger.warn("Unable to get page count");
+            throw new ServiceException(e);
+        }
     }
 
     private void fillDirection(Direction direction) {

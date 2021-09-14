@@ -13,32 +13,5 @@
 </head>
 <body>
     <jsp:include page="header.jsp"/>
-    <div class="wrapper">
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h3>Bootstrap Sidebar</h3>
-            </div>
-            <ul class="list-unstyled components">
-                <li>
-                    <a href="#"><fmt:message key="cabinet.sidebar.makeorder"/></a>
-                </li>
-                <li>
-                    <a href="#"><fmt:message key="cabinet.sidebar.orders"/></a>
-                </li>
-                <c:if test="${sessionScope.user.role.toString()} eq 'ADMIN'">
-                    <li>
-                        <a href="#"><fmt:message key="cabinet.sidebar.userorders"/></a>
-                    </li>
-                    <li>
-                        <a href="#"><fmt:message key="cabinet.sidebar.depots"/></a>
-                    </li>
-                </c:if>
-            </ul>
-        </div>
-        <div class="content">
-
-        </div>
-    </div>
-    <jsp:include page="${requestScope.subpage}"/>
 </body>
 </html>

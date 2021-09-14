@@ -8,21 +8,19 @@ import com.delivery.delivery.service.ServiceException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
-public class GetDirectionsPageCommand implements Command {
+public class DeleteDirectionCommand implements Command {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        DirectionService directionService = DirectionService.getInstance();
-        request.setAttribute("currentPage", 1);
+        DirectionService service = DirectionService.getInstance();
+        int id = Integer.parseInt(request.getParameter("id"));
         try {
-            List<Direction> directionList = directionService.getAllDirections(10, 0);
-            request.setAttribute("pageCount", directionService.getPageCount(10));
-            request.setAttribute("list", directionList);
+            service.deleteDirection(new Direction(id));
+            request.removeAttribute("error");
+            return Path.REDIRECT_DIRECTIONS;
         } catch (ServiceException e) {
-            return "/WEB-INF/jsp/error.jsp";
+            request.setAttribute("error", "Unable to delete direction");
+            return Path.DIRECTIONS_PAGE;
         }
-
-        return Path.DIRECTIONS_PAGE;
     }
 }

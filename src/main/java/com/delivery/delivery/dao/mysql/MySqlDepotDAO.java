@@ -19,6 +19,7 @@ public class MySqlDepotDAO implements DepotDAO {
     private static final String INSERT_DEPOT = "INSERT INTO depot (depot_name, default_address)  VALUES (?, ?)";
     private static final String GET_BY_ID = "SELECT * FROM depot WHERE id = ?";
     private static final String GET_ALL = "SELECT * FROM depot";
+    private static final String GET_BY_NAME = "SELECT id FROM depot WHERE depot_name = ?";
     private static final String UPDATE_DEPOT = "UPDATE depot SET depot_name = ?, default_address = ? WHERE id = ?";
     private static final String DELETE_DEPOT = "DELETE FROM depot WHERE id = ?";
 
@@ -45,7 +46,7 @@ public class MySqlDepotDAO implements DepotDAO {
                     depot.setId(set.getInt(1));
                 }
                 else {
-                    throw new SQLException("Unable to insert depot to database");
+                    return null;
                 }
             }
         }
@@ -67,9 +68,6 @@ public class MySqlDepotDAO implements DepotDAO {
                 if(set.next()) {
                     depot = parseDepot(set);
                 }
-                else {
-                    throw new SQLException("Depot not found");
-                }
             }
         }
         catch (SQLException e) {
@@ -78,6 +76,23 @@ public class MySqlDepotDAO implements DepotDAO {
         }
         return depot;
     }
+
+    @Override
+    public int getIdByName(String name) {
+        try(Connection conn = ConnectionPool.getInstance().getConnection();
+            PreparedStatement statement = conn.prepareStatement(GET_BY_NAME)) {
+            statement.setString(1, name);
+            try(ResultSet set = statement.executeQuery()) {
+                if(set.next()) {
+                    return set.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            logger.warn("Unable to find depot by name: " + name);
+        }
+        return -1;
+    }
+
 
     @Override
     public void updateDepot(Depot depot) {

@@ -10,6 +10,8 @@ public interface DepotDAO {
 
     Depot getById(int id);
 
+    int getIdByName(String name);
+
     void updateDepot(Depot user);
 
     void deleteDepot(Depot user);

@@ -67,16 +67,13 @@ public class MySqlDirectionDAO implements DirectionDAO {
 
     @Override
     public Direction getById(int id) {
-        Direction direction;
+        Direction direction = null;
         try(Connection conn = ConnectionPool.getInstance().getConnection();
             PreparedStatement statement = conn.prepareStatement(GET_BY_ID)) {
             statement.setInt(1, id);
             try(ResultSet set = statement.executeQuery()) {
                 if(set.next()) {
                     direction = parseDirection(set);
-                }
-                else {
-                    throw new SQLException("Depot not found");
                 }
             }
         }
@@ -167,7 +164,7 @@ public class MySqlDirectionDAO implements DirectionDAO {
         try(Connection conn = ConnectionPool.getInstance().getConnection();
             ResultSet set = conn.createStatement().executeQuery(GET_ALL_COUNT)) {
             if(set.next()) {
-                return (int)Math.ceil(set.getFloat(1)/onPageCount);
+                return (int)Math.ceil(set.getFloat(1)/onPageCount - 0.5);
             }
         } catch (SQLException e) {
             logger.warn("Unable to get directions from database");

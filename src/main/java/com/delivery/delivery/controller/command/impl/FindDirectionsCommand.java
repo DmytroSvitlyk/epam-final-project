@@ -20,6 +20,7 @@ public class FindDirectionsCommand implements Command {
         String sortBy = request.getParameter("sortBy");
         try {
             List<Direction> directionList = directionService.getDirectionsByDepotNames(from, to, sortBy,10, 0);
+            request.setAttribute("pageCount", directionService.getPageCount(10));
             request.setAttribute("list", directionList);
         } catch (ServiceException e) {
             return "/WEB-INF/jsp/error.jsp";

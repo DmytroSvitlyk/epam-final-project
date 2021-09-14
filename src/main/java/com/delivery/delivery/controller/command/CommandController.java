@@ -18,6 +18,9 @@ public class CommandController {
             case CommandConstants.GET_DIRECTIONS_PAGE : return new GetDirectionsPageCommand();
             case CommandConstants.GET_DIRECTIONS : return new GetDirectionsCommand();
             case CommandConstants.FIND_DIRECTIONS : return new FindDirectionsCommand();
+            case CommandConstants.DIRECTION_ADD : return new AddDirectionCommand();
+            case CommandConstants.GET_DIRECTION_ADD_PAGE : return new GetDirectionAddPageCommand();
+            case CommandConstants.DIRECTION_DELETE : return new DeleteDirectionCommand();
             default: return new UnknownCommand();
         }
     }

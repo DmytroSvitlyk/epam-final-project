@@ -6,8 +6,6 @@
 <fmt:setLocale value="${sessionScope.lang}"/>
 <fmt:setBundle basename="localization.lang"/>
 
-<c:set var="currentPage" value="${requestScope.currentPage}"/>
-
 <html>
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -15,7 +13,9 @@
 </head>
     <body>
         <jsp:include page="header.jsp"/>
-        <form class="form-inline" action="directions">
+        <h2 style="margin-left: 20px"><fmt:message key="directions.page.title"/></h2>
+        <c:out value="${requestScope.error}"/><br>
+        <form class="form-inline" action="directions" autocomplete="off">
             <div class="form-group mx-sm-3 mb-2">
                 <input type="text" class="form-control" name="depotFrom" placeholder=<fmt:message key="directions.form.from"/>/>
             </div>
@@ -33,18 +33,24 @@
             <input type="text" name="command" value="find-directions" hidden/>
             <button type="submit" class="btn btn-primary mb-2"><fmt:message key="directions.form.find"/></button>
         </form>
+        <c:if test="${sessionScope.user.role.toString() eq 'ADMIN'}">
+            <form class="form-inline" action="direction" style="margin-left: 16px">
+                <input type="text" name="command" value="get-direction-add-page" hidden/>
+                <button type="submit" class="btn btn-success mb-2"><fmt:message key="directions.form.add"/></button>
+            </form>
+        </c:if>
         <ct:directionList1 list="${requestScope.list}"/>
         <nav>
             <ul class="pagination">
-                <label  style="margin: 0px 10px 0px 50px; vertical-align: middle; line-height: 200%"><fmt:message key="directions.pagination.page"/></label>
-                <c:if test="${currentPage} eq 1">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                <label  style="margin: 0px 10px 0px 50px; vertical-align: middle; line-height: 200%" ${requestScope.pageCount < 1 ? 'hidden' : ''}><fmt:message key="directions.pagination.page"/></label>
+                <c:if test="${requestScope.currentPage > 1}">
+                    <li class="page-item"><a class="page-link" href="directions?command=get-directions&page=${requestScope.currentPage - 1}">Previous</a></li>
                 </c:if>
-                <c:forEach begin="0" end="${requestScope.pageCount}" step="1" var="page">
-                    <li class="page-item"><a class="page-link" href="directions?command=get-directions&page=${page + 1}">${page + 1}</a></li>
+                <c:forEach begin="1" end="${requestScope.pageCount}" step="1" var="page">
+                    <li class="page-item"><a class="page-link" href="directions?command=get-directions&page=${page}">${page}</a></li>
                 </c:forEach>
-                <c:if test="${currentPage} eq ${requestScope.pageCount}">
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                <c:if test="${requestScope.currentPage < requestScope.pageCount}">
+                    <li class="page-item"><a class="page-link" href="directions?command=get-directions&page=${requestScope.currentPage + 1}">Next</a></li>
                 </c:if>
             </ul>
         </nav>
